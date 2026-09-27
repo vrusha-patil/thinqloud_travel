@@ -12,7 +12,11 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { LogOut, User } from 'lucide-react';
 
+import AdminDashboard from './pages/AdminDashboard';
+import Features from './pages/public/Features';
+import TravelPolicy from './pages/public/TravelPolicy';
 import Home from './pages/public/Home';
+import Profile from './pages/Profile';
 
 const Navigation = () => {
   const { user, logout } = useAuth();
@@ -46,10 +50,13 @@ const Navigation = () => {
               {user.role === 'employee' && <Link to="/dashboard/employee" className="text-gray-600 font-bold hover:text-primary transition-colors">My Dashboard</Link>}
               {user.role === 'manager' && <Link to="/dashboard/manager" className="text-gray-600 font-bold hover:text-primary transition-colors">Manager Portal</Link>}
               {user.role === 'finance' && <Link to="/dashboard/finance" className="text-gray-600 font-bold hover:text-primary transition-colors">Finance Portal</Link>}
+              {user.role === 'admin' && <Link to="/dashboard/admin" className="text-gray-600 font-bold hover:text-primary transition-colors">Admin Portal</Link>}
             </>
           ) : (
             <Link to="/" className="text-gray-600 font-bold hover:text-primary transition-colors">Home</Link>
           )}
+          <Link to="/features" className="text-gray-600 font-bold hover:text-primary transition-colors">Features</Link>
+          <Link to="/policy" className="text-gray-600 font-bold hover:text-primary transition-colors">Policy</Link>
           <Link to="/about" className="text-gray-600 font-bold hover:text-primary transition-colors">About Us</Link>
           <Link to="/contact" className="text-gray-600 font-bold hover:text-primary transition-colors">Contact</Link>
         </nav>
@@ -61,12 +68,17 @@ const Navigation = () => {
                 <p className="text-sm font-bold text-gray-900 leading-tight">{user.name}</p>
                 <p className="text-xs text-gray-500 font-bold uppercase">{user.role}</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 font-black border border-orange-100 shadow-sm">
-                {user.name.charAt(0).toUpperCase()}
+              <div className="relative group">
+                <button className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 font-black border border-orange-100 shadow-sm overflow-hidden cursor-pointer">
+                  {user.profilePhoto ? <img src={user.profilePhoto} className="w-full h-full object-cover" alt="Profile" /> : user.name?.charAt(0).toUpperCase()}
+                </button>
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 hidden group-hover:block transition-all">
+                  <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">Profile</Link>
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 font-medium flex items-center gap-2">
+                    <LogOut size={16} /> Logout
+                  </button>
+                </div>
               </div>
-              <button onClick={handleLogout} className="text-gray-400 hover:text-red-500 transition-colors p-2 bg-gray-50 rounded-lg hover:bg-red-50" title="Logout">
-                <LogOut size={18} />
-              </button>
             </div>
           ) : (
             <Link to="/login" className="bg-primary hover:bg-primary-hover text-white px-6 py-2 rounded-lg font-bold transition-colors">
@@ -76,27 +88,6 @@ const Navigation = () => {
         </div>
       </div>
     </header>
-  );
-};
-
-const RootRedirect = () => {
-  const { user } = useAuth();
-  if (!user) return <Home />;
-  if (user.role === 'manager') return <Navigate to="/dashboard/manager" replace />;
-  if (user.role === 'finance') return <Navigate to="/dashboard/finance" replace />;
-  return <Navigate to="/dashboard/employee" replace />;
-};
-
-const Footer = () => {
-  const location = useLocation();
-  if (location.pathname === '/') return null;
-
-  return (
-    <footer className="bg-white border-t border-gray-100 py-8 mt-auto">
-      <div className="container mx-auto px-6 text-center text-gray-500 text-sm font-medium">
-        &copy; {new Date().getFullYear()} TripFlow. All rights reserved.
-      </div>
-    </footer>
   );
 };
 
@@ -115,8 +106,13 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/contact" element={<ContactUs />} />
               
-              {/* Default root routes based on auth */}
-              <Route path="/" element={<RootRedirect />} />
+              <Route path="/" element={<Home />} />
+              
+              <Route path="/profile" element={
+                <ProtectedRoute allowedRoles={['employee', 'manager', 'finance', 'admin']}>
+                  <Profile />
+                </ProtectedRoute>
+              } />
 
               {/* Protected Dashboards */}
               <Route path="/dashboard/employee" element={
@@ -144,13 +140,19 @@ function App() {
                   <FinanceDashboard />
                 </ProtectedRoute>
               } />
+              <Route path="/dashboard/admin" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
               
+              <Route path="/features" element={<Features />} />
+              <Route path="/policy" element={<TravelPolicy />} />
+
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
-          
-          <Footer />
         </div>
       </BrowserRouter>
     </AuthProvider>

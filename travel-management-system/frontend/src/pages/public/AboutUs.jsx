@@ -1,5 +1,6 @@
 import React from 'react';
 import { Target, Users, ShieldCheck, Globe } from 'lucide-react';
+import PublicFooter from '../../components/PublicFooter';
 
 const AboutUs = () => {
   return (
@@ -39,6 +40,7 @@ const AboutUs = () => {
           />
         </div>
       </div>
+      <PublicFooter />
     </div>
   );
 };

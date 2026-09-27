@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Briefcase, Lock, Mail, ArrowRight } from 'lucide-react';
+import { Briefcase, Lock, Mail, ArrowRight, PlaneTakeoff } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -35,6 +35,12 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
+      <Link to="/" className="absolute top-8 left-8 flex items-center gap-2 group z-20">
+        <div className="bg-primary p-2 rounded-xl group-hover:scale-110 transition-transform">
+          <PlaneTakeoff className="text-white w-6 h-6" />
+        </div>
+        <span className="text-2xl font-black text-gray-900 tracking-tight hidden sm:block">TripFlow</span>
+      </Link>
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-96 bg-secondary/10 -skew-y-6 transform origin-top-left -z-10"></div>
       

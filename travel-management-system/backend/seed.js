@@ -37,8 +37,16 @@ const seedDatabase = async () => {
       department: 'Finance'
     });
 
-    console.log('Database successfully seeded with 3 users!');
-    console.log('Emails: vrushali@company.com | manager@company.com | finance@company.com');
+    await User.create({
+      name: 'System Admin',
+      email: 'admin@company.com',
+      password: 'password123',
+      role: 'admin',
+      department: 'IT'
+    });
+
+    console.log('Database successfully seeded with 4 users!');
+    console.log('Emails: vrushali@company.com | manager@company.com | finance@company.com | admin@company.com');
     console.log('Password for all: password123');
     process.exit();
   } catch (error) {

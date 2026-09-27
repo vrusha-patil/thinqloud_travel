@@ -70,6 +70,30 @@ const getPendingExpenses = async (req, res) => {
   }
 };
 
+const getAllExpensesForManager = async (req, res) => {
+  try {
+    const claims = await ExpenseClaim.find({})
+      .populate('employeeId', 'name')
+      .populate('requestId', 'requestId destination')
+      .sort({ createdAt: -1 });
+    res.json(claims);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getAllExpensesForFinance = async (req, res) => {
+  try {
+    const claims = await ExpenseClaim.find({})
+      .populate('employeeId', 'name')
+      .populate('requestId', 'requestId destination')
+      .sort({ createdAt: -1 });
+    res.json(claims);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const markAsPaid = async (req, res) => {
   try {
     const { financeComment } = req.body;
@@ -103,5 +127,8 @@ module.exports = {
   getPendingExpensesForManager,
   verifyExpense,
   getPendingExpenses,
-  markAsPaid
+  markAsPaid, 
+  getAllExpensesForManager, 
+  getAllExpensesForFinance
 };
+

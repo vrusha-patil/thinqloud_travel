@@ -57,6 +57,13 @@ const expenseClaimSchema = new mongoose.Schema({
   },
   financeComment: {
     type: String
+  },
+  receiptsVerified: {
+    type: Boolean,
+    default: false
+  },
+  paymentReference: {
+    type: String
   }
 }, { timestamps: true });
 

@@ -36,12 +36,39 @@ const createTravelRequest = async (req, res) => {
   }
 };
 
+const ExpenseClaim = require('../models/ExpenseClaim');
+
 // @desc    Get logged in employee's travel requests
 // @route   GET /api/travel-requests/my-requests
 // @access  Private (Employee)
 const getMyRequests = async (req, res) => {
   try {
-    const requests = await TravelRequest.find({ employeeId: req.user._id }).sort({ createdAt: -1 });
+    const requests = await TravelRequest.find({ employeeId: req.user._id }).sort({ createdAt: -1 }).lean();
+    
+    // Attach expense claim information if it exists
+    const requestsWithExpense = await Promise.all(requests.map(async (reqItem) => {
+      const expenseClaim = await ExpenseClaim.findOne({ requestId: reqItem._id }).lean();
+      if (expenseClaim) {
+        reqItem.expenseClaimStatus = expenseClaim.status;
+        reqItem.expenseClaimId = expenseClaim._id;
+      }
+      return reqItem;
+    }));
+
+    res.json(requestsWithExpense);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get all requests for manager dashboard (including history)
+// @route   GET /api/travel-requests/manager-all
+// @access  Private (Manager)
+const getManagerRequests = async (req, res) => {
+  try {
+    const requests = await TravelRequest.find({})
+      .populate('employeeId', 'name email department')
+      .sort({ createdAt: -1 });
     res.json(requests);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -95,5 +122,6 @@ module.exports = {
   createTravelRequest,
   getMyRequests,
   getPendingRequests,
+  getManagerRequests,
   updateRequestStatus
 };

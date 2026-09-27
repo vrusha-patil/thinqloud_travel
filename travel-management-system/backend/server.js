@@ -19,9 +19,12 @@ app.get('/api/health', (req, res) => {
 
 // Import Routes
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/travel-requests', require('./routes/travelRequestRoutes'));
 app.use('/api/expenses', require('./routes/expenseRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/payment', require('./routes/paymentRoutes'));
 
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));

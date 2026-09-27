@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { PlaneTakeoff, CheckCircle, Wallet, FileText, ArrowRight, ShieldCheck, Map } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import PublicFooter from '../../components/PublicFooter';
 
 const Home = () => {
+  const { user } = useAuth();
+  
   return (
     <div className="bg-[#F8F7F2] min-h-screen font-sans">
       
@@ -20,9 +24,23 @@ const Home = () => {
           <Link to="/about" className="hover:text-primary transition-colors">About Us</Link>
           <Link to="/contact" className="hover:text-primary transition-colors">Contact</Link>
         </div>
-        <div className="flex gap-4">
-          <Link to="/login" className="px-6 py-2.5 rounded-full font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all">Log In</Link>
-          <Link to="/login" className="px-6 py-2.5 rounded-full font-bold text-white bg-primary hover:bg-primary-hover shadow-lg shadow-green-900/20 transition-all">Get Started</Link>
+        <div className="flex gap-4 items-center">
+          {user ? (
+            <div className="relative group">
+              <button className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold border border-orange-200 overflow-hidden">
+                {user.profilePhoto ? <img src={user.profilePhoto} className="w-full h-full object-cover" alt="Profile" /> : user.name?.charAt(0).toUpperCase()}
+              </button>
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 hidden group-hover:block transition-all">
+                <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">Profile</Link>
+                <Link to={`/dashboard/${user.role}`} className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">Go to Dashboard</Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="px-6 py-2.5 rounded-full font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all">Log In</Link>
+              <Link to="/login" className="px-6 py-2.5 rounded-full font-bold text-white bg-primary hover:bg-primary-hover shadow-lg shadow-green-900/20 transition-all">Get Started</Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -161,49 +179,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-16 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="col-span-1 md:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
-              <PlaneTakeoff className="text-white w-6 h-6" />
-              <span className="text-2xl font-black text-white tracking-tight">TripFlow</span>
-            </div>
-            <p className="text-sm leading-relaxed mb-6">Plan smarter. Travel better. Expense effortlessly.</p>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Product</h4>
-            <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">Travel Requests</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Approvals</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Expense Management</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Reimbursements</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Company</h4>
-            <ul className="space-y-3 text-sm">
-              <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-              <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Legal</h4>
-            <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-800 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>© 2026 TripFlow. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
-            <a href="#" className="hover:text-white transition-colors">Twitter</a>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 };

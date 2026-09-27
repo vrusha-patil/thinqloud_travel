@@ -26,6 +26,26 @@ const userSchema = new mongoose.Schema({
   managerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  },
+  address: {
+    type: String,
+    default: ''
+  },
+  mobile: {
+    type: String,
+    default: ''
+  },
+  profilePhoto: {
+    type: String,
+    default: ''
+  },
+  customId: {
+    type: String,
+    default: ''
+  },
+  joiningDate: {
+    type: Date,
+    default: Date.now
   }
 }, { timestamps: true });
 

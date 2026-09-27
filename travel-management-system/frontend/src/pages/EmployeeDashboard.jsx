@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Plane, Calendar, MapPin, Building, Plus, ChevronRight, CheckCircle, Clock } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -9,6 +9,7 @@ const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [timelineTrip, setTimelineTrip] = useState(null);
 
   // Form state
   const [destination, setDestination] = useState('');
@@ -117,11 +118,13 @@ const EmployeeDashboard = () => {
               purpose={req.purpose}
               startDate={req.startDate}
               endDate={req.endDate}
-              image="https://images.unsplash.com/photo-1595224319694-82a874251025?q=80&w=800&auto=format&fit=crop"
+              image="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=800"
               status={req.status}
+              expenseClaimStatus={req.expenseClaimStatus}
               cost={`₹${req.estimatedCosts?.total || 0}`}
               token={user.token}
               refresh={fetchRequests}
+              onViewTimeline={() => setTimelineTrip(req)}
             />
           ))}
           {filteredRequests.length === 0 && (
@@ -133,6 +136,45 @@ const EmployeeDashboard = () => {
           )}
         </div>
       </section>
+
+      {timelineTrip && (
+        <TimelineModal trip={timelineTrip} onClose={() => setTimelineTrip(null)} />
+      )}
+    </div>
+  );
+};
+
+const TimelineModal = ({ trip, onClose }) => {
+  const steps = [
+    { label: 'Request Created', done: true },
+    { label: 'Submitted', done: true },
+    { label: 'Manager Review', done: trip.status !== 'Pending Approval' },
+    { label: 'Approved', done: ['Approved', 'Completed', 'Paid'].includes(trip.status) },
+    { label: 'Booking', done: ['Approved', 'Completed', 'Paid'].includes(trip.status) },
+    { label: 'Travel', done: ['Completed', 'Paid'].includes(trip.status) },
+    { label: 'Expense', done: ['Completed', 'Paid'].includes(trip.status) },
+    { label: 'Reimbursement', done: trip.status === 'Paid' }
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 text-xl font-bold">&times;</button>
+        <h3 className="text-2xl font-black text-gray-900 mb-2">Trip Timeline</h3>
+        <p className="text-gray-500 mb-6">{trip.requestId} • {trip.destination}</p>
+        <div className="space-y-4">
+          {steps.map((step, idx) => (
+            <div key={idx} className="flex items-center gap-4">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step.done ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
+                {step.done ? '✓' : idx + 1}
+              </div>
+              <div className={`text-lg font-medium ${step.done ? 'text-gray-900' : 'text-gray-400'}`}>
+                {step.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
@@ -149,7 +191,7 @@ const StatCard = ({ title, value, icon, color }) => (
   </div>
 );
 
-const TripCard = ({ id, rawId, destination, purpose, startDate, endDate, image, status, cost, token, refresh }) => {
+const TripCard = ({ id, rawId, destination, purpose, startDate, endDate, image, status, expenseClaimStatus, cost, token, refresh, onViewTimeline }) => {
   const navigate = useNavigate();
 
   const getStatusColor = (s) => {
@@ -187,17 +229,24 @@ const TripCard = ({ id, rawId, destination, purpose, startDate, endDate, image, 
           <span className="text-gray-500 text-sm">Est. Cost</span>
           <span className="text-lg font-bold text-secondary">{cost}</span>
         </div>
-        {(status === 'Approved' || status === 'Completed') && (
+        {(status === 'Approved' || status === 'Completed') && !['Approved', 'Paid'].includes(expenseClaimStatus) && (
           <button 
             onClick={handleExpenseClick}
             className="w-full mt-4 bg-primary text-white py-2.5 rounded-xl font-bold text-sm hover:bg-primary-hover shadow-lg shadow-green-900/20 transition-all hover:-translate-y-0.5"
           >
-            Submit Expense Claim →
+            {expenseClaimStatus ? 'Update Expense Claim' : 'Submit Expense Claim'}
           </button>
         )}
+        <button 
+          onClick={onViewTimeline}
+          className="w-full mt-2 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all"
+        >
+          View Timeline
+        </button>
       </div>
     </div>
   );
 };
 
 export default EmployeeDashboard;
+
