@@ -19,7 +19,7 @@ const EmployeeDashboard = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/travel-requests/my-requests', {
+      const res = await axios.get('https://travel-backend-8eg5.onrender.com/api/travel-requests/my-requests', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setRequests(res.data);
@@ -39,7 +39,7 @@ const EmployeeDashboard = () => {
   const handleSubmit = async () => {
     if(!destination || !startDate || !endDate) return alert("Please fill all quick draft fields (Dest, Start, End). Add purpose as 'Client Meeting' implicitly for now.");
     try {
-      await axios.post('http://localhost:5000/api/travel-requests', {
+      await axios.post('https://travel-backend-8eg5.onrender.com/api/travel-requests', {
         destination,
         purpose: purpose || 'Business Meeting',
         startDate,
@@ -249,6 +249,7 @@ const TripCard = ({ id, rawId, destination, purpose, startDate, endDate, image, 
 };
 
 export default EmployeeDashboard;
+
 
 
 

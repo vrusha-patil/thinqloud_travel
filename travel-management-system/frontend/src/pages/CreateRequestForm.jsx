@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -40,7 +40,7 @@ const CreateRequestForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/travel-requests', {
+      await axios.post('https://travel-backend-8eg5.onrender.com/api/travel-requests', {
         destination: formData.destination,
         purpose: formData.businessPurpose || formData.purpose,
         startDate: formData.startDate,
@@ -77,7 +77,7 @@ const CreateRequestForm = () => {
 
         <div className="mb-10 text-center mt-4">
           <h1 className="text-3xl font-black text-gray-900">Plan Your Journey</h1>
-          <p className="text-gray-500 mt-2">Step {step} of 3 • {
+          <p className="text-gray-500 mt-2">Step {step} of 3 â€¢ {
             step === 1 ? 'Trip Details' :
             step === 2 ? 'Purpose & Logistics' : 'Estimated Costs'
           }</p>
@@ -165,21 +165,21 @@ const CreateRequestForm = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Travel Cost (₹)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Travel Cost (â‚¹)</label>
                   <input type="number" value={formData.estimatedCosts.travel} onChange={e => setFormData({...formData, estimatedCosts: {...formData.estimatedCosts, travel: e.target.value}})} placeholder="e.g. 5000" required min="0" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary transition-all" />
                 </div>
                 {formData.accommodation && (
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Hotel Cost (₹)</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Hotel Cost (â‚¹)</label>
                     <input type="number" value={formData.estimatedCosts.hotel} onChange={e => setFormData({...formData, estimatedCosts: {...formData.estimatedCosts, hotel: e.target.value}})} placeholder="e.g. 8000" required min="0" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary transition-all" />
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Food & Meals (₹)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Food & Meals (â‚¹)</label>
                   <input type="number" value={formData.estimatedCosts.food} onChange={e => setFormData({...formData, estimatedCosts: {...formData.estimatedCosts, food: e.target.value}})} placeholder="e.g. 2500" required min="0" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Other Costs (₹)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Estimated Other Costs (â‚¹)</label>
                   <input type="number" value={formData.estimatedCosts.other} onChange={e => setFormData({...formData, estimatedCosts: {...formData.estimatedCosts, other: e.target.value}})} placeholder="e.g. 1000" min="0" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary transition-all" />
                 </div>
               </div>
@@ -216,3 +216,4 @@ const CreateRequestForm = () => {
 };
 
 export default CreateRequestForm;
+

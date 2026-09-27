@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { Eye, EyeOff, User, Mail, MapPin, Phone, Lock, Camera } from 'lucide-react';
@@ -46,7 +46,7 @@ const Profile = () => {
     setLoading(true);
     setMsg({ type: '', text: '' });
     try {
-      const res = await axios.put('http://localhost:5000/api/users/profile', profileData, {
+      const res = await axios.put('https://travel-backend-8eg5.onrender.com/api/users/profile', profileData, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setMsg({ type: 'success', text: 'Profile updated successfully!' });
@@ -70,7 +70,7 @@ const Profile = () => {
 
     setLoading(true);
     try {
-      await axios.put('http://localhost:5000/api/users/change-password', {
+      await axios.put('https://travel-backend-8eg5.onrender.com/api/users/change-password', {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       }, {
@@ -104,7 +104,7 @@ const Profile = () => {
           </div>
           <div>
             <h1 className="text-3xl font-black text-gray-900">{profileData.name}</h1>
-            <p className="text-gray-500 font-medium uppercase tracking-wider text-sm">{user.role} {user.department ? `• ${user.department}` : ''}</p>
+            <p className="text-gray-500 font-medium uppercase tracking-wider text-sm">{user.role} {user.department ? `â€¢ ${user.department}` : ''}</p>
           </div>
         </div>
 
@@ -223,3 +223,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

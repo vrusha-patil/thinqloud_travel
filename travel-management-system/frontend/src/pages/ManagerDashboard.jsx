@@ -25,7 +25,7 @@ const ManagerDashboard = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/travel-requests/manager-all', {
+      const res = await axios.get('https://travel-backend-8eg5.onrender.com/api/travel-requests/manager-all', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setRequests(res.data);
@@ -36,7 +36,7 @@ const ManagerDashboard = () => {
 
   const fetchExpenses = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/expenses/manager-all', {
+      const res = await axios.get('https://travel-backend-8eg5.onrender.com/api/expenses/manager-all', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setExpenses(res.data);
@@ -62,7 +62,7 @@ const ManagerDashboard = () => {
     }
 
     try {
-      await axios.patch(`http://localhost:5000/api/travel-requests/${id}/status`, {
+      await axios.patch(`https://travel-backend-8eg5.onrender.com/api/travel-requests/${id}/status`, {
         status,
         managerComment: comment
       }, {
@@ -77,7 +77,7 @@ const ManagerDashboard = () => {
 
   const handleVerifyExpense = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/api/expenses/${id}/verify`, {}, {
+      await axios.patch(`https://travel-backend-8eg5.onrender.com/api/expenses/${id}/verify`, {}, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       alert('Expense Verified successfully!');
@@ -313,9 +313,9 @@ const VerifyModal = ({ expense, onClose, onVerify }) => {
              <h3 className="font-bold text-lg mb-4 pr-12">Receipt Document</h3>
                                        <div className="flex-1 overflow-auto bg-gray-100 rounded-lg flex items-center justify-center min-h-[50vh] w-full">
                {viewReceipt?.toLowerCase().endsWith('.pdf') ? (
-                 <iframe src={viewReceipt.startsWith('/') ? `http://localhost:5000${viewReceipt}` : viewReceipt} className="w-full h-[80vh] border-0" title="Receipt PDF" />
+                 <iframe src={viewReceipt.startsWith('/') ? `https://travel-backend-8eg5.onrender.com${viewReceipt}` : viewReceipt} className="w-full h-[80vh] border-0" title="Receipt PDF" />
                ) : (
-                 <img src={viewReceipt?.startsWith('/') ? `http://localhost:5000${viewReceipt}` : viewReceipt} alt="Receipt" className="max-w-full max-h-[80vh] object-contain" />
+                 <img src={viewReceipt?.startsWith('/') ? `https://travel-backend-8eg5.onrender.com${viewReceipt}` : viewReceipt} alt="Receipt" className="max-w-full max-h-[80vh] object-contain" />
                )}
              </div>
           </div>
@@ -326,6 +326,7 @@ const VerifyModal = ({ expense, onClose, onVerify }) => {
 };
 
 export default ManagerDashboard;
+
 
 
 

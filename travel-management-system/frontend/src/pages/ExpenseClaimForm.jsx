@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -51,7 +51,7 @@ const ExpenseClaimForm = () => {
       const formData = new FormData();
       formData.append('receipt', receiptFile);
       try {
-        const res = await axios.post('http://localhost:5000/api/upload', formData, {
+        const res = await axios.post('https://travel-backend-8eg5.onrender.com/api/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${user.token}`
@@ -102,7 +102,7 @@ const ExpenseClaimForm = () => {
         receiptUrl: e.receiptUrl
       }));
 
-      await axios.post('http://localhost:5000/api/expenses', {
+      await axios.post('https://travel-backend-8eg5.onrender.com/api/expenses', {
         requestId: trip.rawId,
         items
       }, {
@@ -131,7 +131,7 @@ const ExpenseClaimForm = () => {
         <div>
           <div className="text-sm font-bold text-primary mb-1">{trip.id}</div>
           <h2 className="text-xl font-bold text-gray-900">{trip.destination}</h2>
-          <p className="text-gray-500 text-sm mt-1">{new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}</p>
+          <p className="text-gray-500 text-sm mt-1">{new Date(trip.startDate).toLocaleDateString()} â€“ {new Date(trip.endDate).toLocaleDateString()}</p>
         </div>
         <div className="mt-4 md:mt-0 text-right">
           <p className="text-sm text-gray-500 font-medium">Claim Deadline</p>
@@ -172,7 +172,7 @@ const ExpenseClaimForm = () => {
                   <input type="date" value={date} onChange={e => setDate(e.target.value)} required className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Amount (₹)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Amount (â‚¹)</label>
                   <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="e.g. 850" required min="1" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" />
                 </div>
               </div>
@@ -218,7 +218,7 @@ const ExpenseClaimForm = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-6">
-                      <p className="font-black text-lg text-gray-900">₹{exp.amount}</p>
+                      <p className="font-black text-lg text-gray-900">â‚¹{exp.amount}</p>
                       <button onClick={() => handleRemove(exp.id)} className="text-gray-300 hover:text-red-500 transition-colors">
                         <Trash2 className="w-5 h-5" />
                       </button>
@@ -242,7 +242,7 @@ const ExpenseClaimForm = () => {
                 return (
                   <div key={cat.id} className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{cat.name}</span>
-                    <span className="font-bold text-gray-900">₹{sum}</span>
+                    <span className="font-bold text-gray-900">â‚¹{sum}</span>
                   </div>
                 );
               })}
@@ -254,7 +254,7 @@ const ExpenseClaimForm = () => {
             <div className="border-t pt-4 mb-8">
               <div className="flex justify-between items-end">
                 <span className="text-gray-500 font-bold uppercase text-xs tracking-wider">Total Claim</span>
-                <span className="text-3xl font-black text-primary">₹{totalClaim}</span>
+                <span className="text-3xl font-black text-primary">â‚¹{totalClaim}</span>
               </div>
             </div>
 
@@ -263,7 +263,7 @@ const ExpenseClaimForm = () => {
               disabled={expenses.length === 0}
               className={`w-full py-4 font-bold rounded-xl transition-all shadow-xl ${expenses.length > 0 ? 'bg-primary hover:bg-primary-hover text-white shadow-green-900/20 hover:-translate-y-1' : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'}`}
             >
-              Submit Expense Claim →
+              Submit Expense Claim â†’
             </button>
           </div>
         </div>
@@ -273,3 +273,4 @@ const ExpenseClaimForm = () => {
 };
 
 export default ExpenseClaimForm;
+

@@ -12,7 +12,7 @@ const FinanceDashboard = () => {
 
   const fetchClaims = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/expenses/finance-all', {
+      const res = await axios.get('https://travel-backend-8eg5.onrender.com/api/expenses/finance-all', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setClaims(res.data);
@@ -31,7 +31,7 @@ const FinanceDashboard = () => {
 
   const handlePay = async (id, paymentId = 'Manual') => {
     try {
-      await axios.patch(`http://localhost:5000/api/expenses/${id}/pay`, {
+      await axios.patch(`https://travel-backend-8eg5.onrender.com/api/expenses/${id}/pay`, {
         financeComment: 'Paid via direct deposit', paymentId
       }, {
         headers: { Authorization: `Bearer ${user.token}` }
@@ -218,9 +218,9 @@ const FinanceReceiptModal = ({ expense, onClose }) => {
              <h3 className="font-bold text-lg mb-4 pr-12">Receipt Document</h3>
                                        <div className="flex-1 overflow-auto bg-gray-100 rounded-lg flex items-center justify-center min-h-[50vh] w-full">
                {viewReceipt?.toLowerCase().endsWith('.pdf') ? (
-                 <iframe src={viewReceipt.startsWith('/') ? `http://localhost:5000${viewReceipt}` : viewReceipt} className="w-full h-[80vh] border-0" title="Receipt PDF" />
+                 <iframe src={viewReceipt.startsWith('/') ? `https://travel-backend-8eg5.onrender.com${viewReceipt}` : viewReceipt} className="w-full h-[80vh] border-0" title="Receipt PDF" />
                ) : (
-                 <img src={viewReceipt?.startsWith('/') ? `http://localhost:5000${viewReceipt}` : viewReceipt} alt="Receipt" className="max-w-full max-h-[80vh] object-contain" />
+                 <img src={viewReceipt?.startsWith('/') ? `https://travel-backend-8eg5.onrender.com${viewReceipt}` : viewReceipt} alt="Receipt" className="max-w-full max-h-[80vh] object-contain" />
                )}
              </div>
           </div>
@@ -243,6 +243,7 @@ const StatCard = ({ title, value, icon, color }) => (
 );
 
 export default FinanceDashboard;
+
 
 
 

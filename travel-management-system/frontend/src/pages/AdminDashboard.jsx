@@ -39,8 +39,8 @@ const AdminDashboard = () => {
     if (user?.token) {
       try {
         const [usersRes, tripsRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/admin/users', { headers: { Authorization: `Bearer ${user.token}` } }),
-          axios.get('http://localhost:5000/api/admin/trips', { headers: { Authorization: `Bearer ${user.token}` } }).catch(() => ({ data: [] }))
+          axios.get('https://travel-backend-8eg5.onrender.com/api/admin/users', { headers: { Authorization: `Bearer ${user.token}` } }),
+          axios.get('https://travel-backend-8eg5.onrender.com/api/admin/trips', { headers: { Authorization: `Bearer ${user.token}` } }).catch(() => ({ data: [] }))
         ]);
         setUsers(usersRes.data);
         setTrips(tripsRes.data);
@@ -81,7 +81,7 @@ const AdminDashboard = () => {
   const handleSendOtp = async () => {
     if (!userFormData.email) return alert('Please enter an email first');
     try {
-      await axios.post('http://localhost:5000/api/admin/users/send-otp', { email: userFormData.email }, {
+      await axios.post('https://travel-backend-8eg5.onrender.com/api/admin/users/send-otp', { email: userFormData.email }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setOtpSent(true);
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
   const handleVerifyOtp = async () => {
     if (!userFormData.email || !userFormData.otp) return alert('Please enter OTP');
     try {
-      await axios.post('http://localhost:5000/api/admin/users/verify-otp', { 
+      await axios.post('https://travel-backend-8eg5.onrender.com/api/admin/users/verify-otp', { 
         email: userFormData.email, 
         otp: userFormData.otp 
       }, {
@@ -115,12 +115,12 @@ const AdminDashboard = () => {
     
     try {
       if (editingUser) {
-        await axios.put(`http://localhost:5000/api/admin/users/${editingUser._id}`, userFormData, {
+        await axios.put(`https://travel-backend-8eg5.onrender.com/api/admin/users/${editingUser._id}`, userFormData, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
       } else {
         if (!otpVerified) return alert('Please verify OTP before adding user.');
-        await axios.post('http://localhost:5000/api/admin/users', userFormData, {
+        await axios.post('https://travel-backend-8eg5.onrender.com/api/admin/users', userFormData, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
       }
@@ -134,7 +134,7 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
+        await axios.delete(`https://travel-backend-8eg5.onrender.com/api/admin/users/${id}`, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         fetchData();
@@ -511,6 +511,7 @@ const StatCard = ({ title, value, icon, color }) => (
 );
 
 export default AdminDashboard;
+
 
 
 
