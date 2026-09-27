@@ -29,10 +29,10 @@ const FinanceDashboard = () => {
     }
   }, [user]);
 
-  const handlePay = async (id) => {
+  const handlePay = async (id, paymentId = 'Manual') => {
     try {
       await axios.patch(`http://localhost:5000/api/expenses/${id}/pay`, {
-        financeComment: 'Paid via direct deposit'
+        financeComment: 'Paid via direct deposit', paymentId
       }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
@@ -41,6 +41,42 @@ const FinanceDashboard = () => {
     } catch (err) {
       alert(err.response?.data?.message || err.message);
     }
+  };
+
+    const handleRazorpayDemo = async (claim) => {
+    // Dynamically load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => {
+      const options = {
+        key: 'rzp_test_ThA4e5FYX09HFG', // Replace with a real test key if needed
+        amount: claim.totalAmount * 100, // Amount in paise
+        currency: 'INR',
+        name: 'TripFlow Corp',
+        description: `Reimbursement for Claim ${claim.claimId}`,
+        image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=150',
+        handler: function (response) {
+          // Fake success handling for demo purposes
+          handlePay(claim._id, response.razorpay_payment_id);
+          alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+        },
+        prefill: {
+          name: claim.employeeId?.name || 'Employee',
+          email: 'finance@tripflow.com',
+          contact: '9999999999'
+        },
+        theme: {
+          color: '#2563EB' // TripFlow Primary Color
+        }
+      };
+      
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response){
+        alert('Payment Failed: ' + response.error.description);
+      });
+      rzp.open();
+    };
+    document.body.appendChild(script);
   };
 
   const pendingClaims = claims.filter(c => c.status === 'Verified');
@@ -97,8 +133,11 @@ const FinanceDashboard = () => {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {displayClaims.map(claim => (
-                  <tr key={claim._id} className="hover:bg-gray-50">
-                    <td className="p-4 font-medium text-primary">{claim.claimId}</td>
+                                    <tr key={claim._id} className="hover:bg-gray-50">
+                    <td className="p-4 font-medium text-primary">
+                      {claim.claimId}
+                      {claim.paymentReference && <div className="text-xs text-gray-500 mt-1">Ref: {claim.paymentReference}</div>}
+                    </td>
                     <td className="p-4 text-gray-900">{claim.employeeId?.name || 'Unknown'}</td>
                     <td className="p-4 text-gray-500 text-sm">{claim.requestId?.requestId}</td>
                     <td className="p-4 font-bold text-gray-900">₹{claim.totalAmount}</td>
@@ -109,7 +148,7 @@ const FinanceDashboard = () => {
                       <button onClick={() => setSelectedExpense(claim)} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">View Receipts</button>
                       {activeTab === 'Pending' && (
                         <>
-                          <button onClick={() => alert('Razorpay integration coming in Phase 2!')} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Pay via Razorpay</button>
+                          <button onClick={() => handleRazorpayDemo(claim)} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Pay via Razorpay</button>
                           <button onClick={() => handlePay(claim._id)} className="px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-medium hover:bg-green-100">Mark Paid Manually</button>
                         </>
                       )}
@@ -174,7 +213,7 @@ const FinanceReceiptModal = ({ expense, onClose }) => {
 
       {viewReceipt && (
         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4">
-          <div className="bg-white p-4 rounded-2xl relative max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white p-4 rounded-2xl relative max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
              <button onClick={() => setViewReceipt(null)} className="absolute top-4 right-4 bg-white rounded-full p-1 text-gray-900 shadow-md"><X size={24}/></button>
              <h3 className="font-bold text-lg mb-4 pr-12">Receipt Document</h3>
                                        <div className="flex-1 overflow-auto bg-gray-100 rounded-lg flex items-center justify-center min-h-[50vh] w-full">
@@ -204,6 +243,11 @@ const StatCard = ({ title, value, icon, color }) => (
 );
 
 export default FinanceDashboard;
+
+
+
+
+
 
 
 

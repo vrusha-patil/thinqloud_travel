@@ -308,7 +308,7 @@ const VerifyModal = ({ expense, onClose, onVerify }) => {
       {/* Nested Receipt View Modal */}
       {viewReceipt && (
         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4">
-          <div className="bg-white p-4 rounded-2xl relative max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white p-4 rounded-2xl relative max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
              <button onClick={() => setViewReceipt(null)} className="absolute top-4 right-4 bg-white rounded-full p-1 text-gray-900 shadow-md"><X size={24}/></button>
              <h3 className="font-bold text-lg mb-4 pr-12">Receipt Document</h3>
                                        <div className="flex-1 overflow-auto bg-gray-100 rounded-lg flex items-center justify-center min-h-[50vh] w-full">
@@ -326,6 +326,8 @@ const VerifyModal = ({ expense, onClose, onVerify }) => {
 };
 
 export default ManagerDashboard;
+
+
 
 
 

@@ -1,20 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Briefcase, Lock, Mail, ArrowRight, PlaneTakeoff } from 'lucide-react';
+import { Briefcase, Lock, Mail, ArrowRight, PlaneTakeoff, Download } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('employee');
   const [error, setError] = useState('');
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
   
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    if (window.deferredPWAInstallPrompt) {
+      setDeferredPrompt(window.deferredPWAInstallPrompt);
+    }
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      window.deferredPWAInstallPrompt = e;
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      alert("To install the app:\n\nOn Chrome/Android: Click the Install icon in the URL bar, or open the browser menu and select 'Install app'.\n\nOn iOS Safari: Tap the Share button and select 'Add to Home Screen'.");
+    }
+  };
+
   // Get the redirect path if the user was redirected to login
-  const from = location.state?.from?.pathname || `/dashboard/${role}`;
+  const from = location.state?.from?.pathname || /dashboard/ + role;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +52,7 @@ const Login = () => {
     try {
       const loggedInUser = await login(email, password);
       if (loggedInUser) {
-        navigate(`/dashboard/${loggedInUser.role}`, { replace: true });
+        navigate(/dashboard/ + loggedInUser.role, { replace: true });
       }
     } catch (err) {
       setError(err.message);
@@ -41,6 +67,16 @@ const Login = () => {
         </div>
         <span className="text-2xl font-black text-gray-900 tracking-tight hidden sm:block">TripFlow</span>
       </Link>
+      
+                  {/* PWA Download Button (Temporarily Commented Out)
+      <button 
+        onClick={handleInstallClick} 
+        className="absolute top-8 right-8 z-20 flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-full font-bold shadow-lg hover:-translate-y-0.5 hover:shadow-xl transition-all"
+      >
+        <Download size={18} /> <span className="hidden sm:inline">Download App</span>
+      </button>
+      */}
+
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-96 bg-secondary/10 -skew-y-6 transform origin-top-left -z-10"></div>
       
@@ -144,3 +180,8 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
+
+

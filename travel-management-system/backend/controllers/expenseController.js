@@ -1,4 +1,4 @@
-const ExpenseClaim = require('../models/ExpenseClaim');
+﻿const ExpenseClaim = require('../models/ExpenseClaim');
 const TravelRequest = require('../models/TravelRequest');
 
 const submitExpenseClaim = async (req, res) => {
@@ -94,15 +94,18 @@ const getAllExpensesForFinance = async (req, res) => {
   }
 };
 
+const nodemailer = require('nodemailer');
+
 const markAsPaid = async (req, res) => {
   try {
-    const { financeComment } = req.body;
+    const { financeComment, paymentId } = req.body;
     
-    const claim = await ExpenseClaim.findById(req.params.id);
+    const claim = await ExpenseClaim.findById(req.params.id).populate('employeeId', 'name email');
 
     if (claim) {
       claim.status = 'Paid';
       if (financeComment) claim.financeComment = financeComment;
+      if (paymentId) claim.paymentReference = paymentId;
       
       const updatedClaim = await claim.save();
 
@@ -111,6 +114,43 @@ const markAsPaid = async (req, res) => {
       if(travelReq) {
         travelReq.status = 'Completed';
         await travelReq.save();
+      }
+
+      // Send email receipt
+      if (process.env.EMAIL_PASS) {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_USER || 'pvrushali9067@gmail.com',
+            pass: process.env.EMAIL_PASS
+          }
+        });
+
+        const mailOptions = {
+          from: process.env.EMAIL_USER || 'pvrushali9067@gmail.com',
+          to: claim.employeeId.email,
+          subject: `TripFlow - Payment Receipt for Claim ${claim.claimId}`,
+          html: `
+            <h2>Payment Successful!</h2>
+            <p>Hello ${claim.employeeId.name},</p>
+            <p>Your expense claim <b>${claim.claimId}</b> has been successfully reimbursed.</p>
+            <table style="border-collapse: collapse; width: 100%; max-width: 500px;">
+              <tr><td style="padding: 8px; border: 1px solid #ddd;"><b>Total Amount:</b></td><td style="padding: 8px; border: 1px solid #ddd;">₹${claim.totalAmount}</td></tr>
+              <tr><td style="padding: 8px; border: 1px solid #ddd;"><b>Payment Ref ID:</b></td><td style="padding: 8px; border: 1px solid #ddd;">${paymentId || 'N/A'}</td></tr>
+              <tr><td style="padding: 8px; border: 1px solid #ddd;"><b>Date & Time:</b></td><td style="padding: 8px; border: 1px solid #ddd;">${new Date().toLocaleString()}</td></tr>
+            </table>
+            <br>
+            <p>Regards,<br>TripFlow Finance Team</p>
+          `
+        };
+
+        transporter.sendMail(mailOptions).catch(err => console.error('Failed to send receipt email', err));
+      } else {
+        console.log('No EMAIL_PASS found in .env. Cannot send receipt email. Details:', {
+          to: claim.employeeId.email,
+          amount: claim.totalAmount,
+          paymentId: paymentId
+        });
       }
 
       res.json(updatedClaim);
@@ -131,4 +171,6 @@ module.exports = {
   getAllExpensesForManager, 
   getAllExpensesForFinance
 };
+
+
 

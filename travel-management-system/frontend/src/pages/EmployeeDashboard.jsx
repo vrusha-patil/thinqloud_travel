@@ -149,11 +149,11 @@ const TimelineModal = ({ trip, onClose }) => {
     { label: 'Request Created', done: true },
     { label: 'Submitted', done: true },
     { label: 'Manager Review', done: trip.status !== 'Pending Approval' },
-    { label: 'Approved', done: ['Approved', 'Completed', 'Paid'].includes(trip.status) },
-    { label: 'Booking', done: ['Approved', 'Completed', 'Paid'].includes(trip.status) },
-    { label: 'Travel', done: ['Completed', 'Paid'].includes(trip.status) },
-    { label: 'Expense', done: ['Completed', 'Paid'].includes(trip.status) },
-    { label: 'Reimbursement', done: trip.status === 'Paid' }
+    { label: 'Approved', done: ['Approved', 'Completed'].includes(trip.status) },
+    { label: 'Booking', done: ['Approved', 'Completed'].includes(trip.status) },
+    { label: 'Travel', done: trip.status === 'Completed' || !!trip.expenseClaimStatus },
+    { label: 'Expense Claimed', done: !!trip.expenseClaimStatus },
+    { label: 'Reimbursement', done: trip.expenseClaimStatus === 'Paid' }
   ];
 
   return (
@@ -166,7 +166,7 @@ const TimelineModal = ({ trip, onClose }) => {
           {steps.map((step, idx) => (
             <div key={idx} className="flex items-center gap-4">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step.done ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                {step.done ? '✓' : idx + 1}
+                {step.done ? <CheckCircle size={16} /> : idx + 1}
               </div>
               <div className={`text-lg font-medium ${step.done ? 'text-gray-900' : 'text-gray-400'}`}>
                 {step.label}
@@ -249,4 +249,15 @@ const TripCard = ({ id, rawId, destination, purpose, startDate, endDate, image, 
 };
 
 export default EmployeeDashboard;
+
+
+
+
+
+
+
+
+
+
+
 
